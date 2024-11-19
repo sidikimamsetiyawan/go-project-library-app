@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"regexp"
 	"time"
 
@@ -16,6 +17,7 @@ var validate = validator.New()
 var jwtSecret = []byte("your_jwt_secret_key")
 
 type RegisterRequest struct {
+	UserName string `json:"user_name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 	Role     string `json:"role"` // Role field for registration
@@ -28,6 +30,8 @@ type LoginRequest struct {
 
 func Register(c *fiber.Ctx) error {
 	var request RegisterRequest
+
+	fmt.Println("request", request)
 
 	db := database.DBConn
 
@@ -61,6 +65,7 @@ func Register(c *fiber.Ctx) error {
 
 	// Create new user
 	newUser := model.Users{
+		UserName:     request.UserName,
 		Email:        request.Email,
 		Password:     string(hashedPassword),
 		Role:         request.Role,
