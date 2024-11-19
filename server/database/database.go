@@ -3,7 +3,7 @@ package database
 import (
 	"log"
 
-	model "github.com/sidikimamsetiyawan/go-project-library-app/models"
+	model "github.com/sidikimamsetiyawan/go-project-library-app/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -25,7 +25,7 @@ func ConnectDB() {
 
 	log.Println("Connection succesfully.")
 
-	db.AutoMigrate(new(model.Blog)) // Find uses model.blog link to github
+	db.AutoMigrate(new(model.Users)) // Find uses model.blog link to github
 
 	DBConn = db
 }

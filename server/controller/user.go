@@ -1,16 +1,15 @@
-package controllers
+package controller
 
 import (
 	"regexp"
 	"time"
 
-	"github.com/sidikimamsetiyawan/go-project-library-app/models"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/sidikimamsetiyawan/go-project-library-app/database"
+	"github.com/sidikimamsetiyawan/go-project-library-app/model"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 var validate = validator.New()
@@ -27,8 +26,10 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-func Register(c *fiber.Ctx, db *gorm.DB) error {
+func Register(c *fiber.Ctx) error {
 	var request RegisterRequest
+
+	db := database.DBConn
 
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
@@ -45,7 +46,7 @@ func Register(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	// Check if email already exists
-	var user models.User
+	var user model.Users
 	if err := db.Where("email = ?", request.Email).First(&user).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "Email already registered"})
 	}
@@ -59,7 +60,7 @@ func Register(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	// Create new user
-	newUser := models.User{
+	newUser := model.Users{
 		Email:        request.Email,
 		Password:     string(hashedPassword),
 		Role:         request.Role,
@@ -76,8 +77,10 @@ func Register(c *fiber.Ctx, db *gorm.DB) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User registered successfully"})
 }
 
-func Login(c *fiber.Ctx, db *gorm.DB) error {
+func Login(c *fiber.Ctx) error {
 	var request LoginRequest
+
+	db := database.DBConn
 
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
@@ -89,7 +92,7 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	// Check if user exists
-	var user models.User
+	var user model.Users
 	if err := db.Where("email = ?", request.Email).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
@@ -102,7 +105,7 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 	// Generate JWT token
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["id"] = user.ID
+	claims["id"] = user.UserID
 	claims["email"] = user.Email
 	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
