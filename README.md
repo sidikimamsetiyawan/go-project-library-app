@@ -6,7 +6,7 @@ Dokumen ini berisi penjelasan terkait studi kasus sistem perpustakaan yang digun
 ## Features
 
 ### 1. Database Design
-- A relational database schema tailored for a library system, including tables for users, categories, books, and transactions.
+- A relational database schema tailored for a library system, including tables for users, categories, books, and transactions ( Relational Database Schema.pdf )
 - ER diagram included in the `/docs` folder ( ERD - Entity Relationship Diagrams.png ).
 
 ### 2. REST API Endpoints
@@ -81,3 +81,4 @@ The complete API documentation for this project is available online. You can acc
 [View API Documentation on Postman](https://documenter.getpostman.com/view/9072736/2sAYBRGuM9)
 
 ## Documentation
+- Comming Soon
