@@ -58,7 +58,7 @@ Dokumen ini berisi penjelasan terkait studi kasus sistem perpustakaan yang digun
 
 ## Database Setup (MySQL)
 
-This project requires a MySQL database. You can download the initial database file from this link: [MySQL Database File](https://drive.google.com/file/d/1F5AvJBU_wA1YPcZsLUq_Nm8QVpQJJMnM/view?usp=sharing).
+This project requires a MySQL database. You can download the initial database file from this link: [MySQL Database File](https://drive.google.com/file/d/1Snp6ngPTu1Kcg5XDgg8Zzu7Dtm7bLD0u/view?usp=sharing).
 
 ### Steps to Set Up
 
@@ -69,9 +69,7 @@ This project requires a MySQL database. You can download the initial database fi
 
 ## Testing with Postman
 
-You can access the Postman collection for testing the API endpoints here: [Postman Collection](https://orange-trinity-586014.postman.co/workspace/ba2fd21e-faab-475c-ba96-402a4b6ca449/folder/9072736-c9c8d5df-ae0b-4d8f-8112-f1742058a7f9).
-
-Alternatively, you can download the collection file and import it into Postman using the "Import" feature. [Download the Postman collection](https://drive.google.com/file/d/1xtSbEKyLTYlTULRE1VxPeiIc-PaMiaO9/view?usp=sharing).
+You can access the Postman collection for testing the API endpoints here: [Postman Collection](https://orange-trinity-586014.postman.co/workspace/PT.-Orde-Digital-Intelektual~34d83240-57f7-4e38-9fb4-8d8d91802b39/collection/9072736-8f6733dd-05f0-4b9f-917d-59de8deb7076?action=share&creator=9072736).
 
 ## API Documentation
 
