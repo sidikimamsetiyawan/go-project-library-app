@@ -24,8 +24,13 @@ type RegisterRequest struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+	Identifier string `json:"identifier" validate:"required"`
+	Password   string `json:"password" validate:"required"`
+}
+
+type UpdateRequest struct {
+	Email    string `json:"email" validate:"omitempty,email"` // Optional, must be a valid email
+	Password string `json:"password" validate:"omitempty"`    // Optional
 }
 
 func Register(c *fiber.Ctx) error {
@@ -97,9 +102,20 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Check if user exists
+	// Determine if identifier is an email or user_name
+	isEmail := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`).MatchString(request.Identifier)
+
 	var user model.Users
-	if err := db.Where("email = ?", request.Email).First(&user).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	if isEmail {
+		// If identifier is an email
+		if err := db.Where("email = ?", request.Identifier).First(&user).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+		}
+	} else {
+		// If identifier is a user_name
+		if err := db.Where("user_name = ?", request.Identifier).First(&user).Error; err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+		}
 	}
 
 	// Check if password matches
@@ -111,6 +127,7 @@ func Login(c *fiber.Ctx) error {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = user.UserID
+	claims["user_name"] = user.UserName
 	claims["email"] = user.Email
 	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
@@ -121,6 +138,59 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"token": tokenString})
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	// Extract user ID from the URL or context (depending on your auth system)
+	userID := c.Params("id")
+
+	db := database.DBConn
+
+	// Get the existing user
+	var user model.Users
+	if err := db.First(&user, userID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	var request UpdateRequest
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
+	}
+
+	// Validate the incoming request fields
+	if err := validate.Struct(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Update email if provided and validate uniqueness
+	if request.Email != "" && request.Email != user.Email {
+		// Check if the new email is already taken by another user
+		var existingUser model.Users
+		if err := db.Where("email = ?", request.Email).First(&existingUser).Error; err == nil {
+			return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "Email is already taken"})
+		}
+		user.Email = request.Email
+	}
+
+	// Update password if provided
+	if request.Password != "" {
+		if !isValidPassword(request.Password) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Password must be 8 characters, alphanumeric, contain at least 1 uppercase letter, and no special characters"})
+		}
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(request.Password), 14)
+		user.Password = string(hashedPassword)
+	}
+
+	// Update modified date and modified_by
+	user.ModifiedDate = time.Now()
+	user.ModifiedBy = "system" // Replace with the current user's info if available
+
+	// Save changes to the database
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not update user"})
+	}
+
+	return c.JSON(fiber.Map{"message": "User updated successfully"})
 }
 
 func isValidPassword(password string) bool {

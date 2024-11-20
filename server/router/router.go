@@ -20,6 +20,58 @@ func SetupRoutes(app *fiber.App) {
 		return controller.Login(c)
 	})
 
+	// Update user route
+	app.Put("/users/:id", func(c *fiber.Ctx) error {
+		return controller.UpdateUser(c)
+	})
+
+	// Categories route
+	app.Post("/categories", func(c *fiber.Ctx) error {
+		return controller.AddCategories(c)
+	})
+
+	app.Put("/categories/:id", func(c *fiber.Ctx) error {
+		return controller.UpdateCategories(c)
+	})
+
+	app.Get("/categories", func(c *fiber.Ctx) error {
+		return controller.ListCategories(c)
+	})
+
+	app.Delete("/categories/:id", func(c *fiber.Ctx) error {
+		return controller.DeleteCategories(c)
+	})
+
+	// Books route
+	app.Post("/books", func(c *fiber.Ctx) error {
+		return controller.AddBooks(c)
+	})
+
+	app.Put("/books/:id", func(c *fiber.Ctx) error {
+		return controller.UpdateBooks(c)
+	})
+
+	app.Get("/books/list", func(c *fiber.Ctx) error {
+		return controller.ListBooks(c)
+	})
+
+	app.Delete("/books/:id", func(c *fiber.Ctx) error {
+		return controller.DeleteBooks(c)
+	})
+
+	// Transactions route
+	app.Post("/transactions", func(c *fiber.Ctx) error {
+		return controller.AddTransactions(c)
+	})
+
+	app.Put("/transactions/:id", func(c *fiber.Ctx) error {
+		return controller.UpdateTransactions(c)
+	})
+
+	app.Delete("/transactions/:id", func(c *fiber.Ctx) error {
+		return controller.DeleteTransactions(c)
+	})
+
 	// Protected routes
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtSecret,
