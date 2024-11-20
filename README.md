@@ -26,14 +26,34 @@ Dokumen ini berisi penjelasan terkait studi kasus sistem perpustakaan yang digun
     ```bash
     git clone https://github.com/sidikimamsetiyawan/gp-project-library-app.git
     ```
-2. Install dependencies:
+2. Navigate to the Project Directory:
     ```bash
-    npm install
+    cd go-project-library-app
+    cd server
     ```
-
-3. Run the application:
+3. Install Dependencies:
+   ```bash
+    go mod tidy
+    ```
+5. Configure the Environment:
+   Check for a configuration file like .env or config.json. If it exists. Open the file and set necessary values like database credentials, ports, etc.
+   Example .env:
+   ```bash
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_USER=your_username
+    DB_PASSWORD=your_password
+    DB_NAME=library_app
+    APP_PORT=8080
+    ```
+7. Set Up the Database (Optional)
+8. Run the Project
+   ```bash
+    go run server.go
+    ```
+10. Test the Application
     ```bash
-    npm start
+    http://localhost:8080
     ```
 
 ## Database Setup (MySQL)
