@@ -6,8 +6,8 @@ Dokumen ini berisi penjelasan terkait studi kasus sistem perpustakaan yang digun
 ## Features
 
 ### 1. Database Design
-- A relational database schema tailored for a library system, including tables for books, users, loans, etc.
-- ER diagram included in the `/docs` folder.
+- A relational database schema tailored for a library system, including tables for users, categories, books, and transactions.
+- ER diagram included in the `/docs` folder ( ERD - Entity Relationship Diagrams.png ).
 
 ### 2. REST API Endpoints
 - Implements at least **6 endpoints**, including:
@@ -17,6 +17,9 @@ Dokumen ini berisi penjelasan terkait studi kasus sistem perpustakaan yang digun
 - Includes **authentication and authorization** for secured endpoints.
 
 ### 3. Configuration File
+- .env included in the `/server`.
+  ![image](https://github.com/user-attachments/assets/b8dd88e6-1979-4ff9-a406-2308baa8e62d)
+
 ### 4. Built with Go
 - Uses Golang for implementation with optional frameworks like : fiber
 
